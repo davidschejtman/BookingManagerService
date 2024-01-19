@@ -1,10 +1,10 @@
-package com.BookingManagerService.repository;
+package com.bookingmanagerservice.repository;
 
-import com.BookingManagerService.model.Booking;
+import com.bookingmanagerservice.model.Block;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BookingRepository extends JpaRepository<Booking, Long> {
+public interface BlockRepository extends JpaRepository<Block, Long> {
     // Aqui você pode adicionar consultas personalizadas se necessário
 }
