@@ -29,6 +29,7 @@ public class Block {
     /**
      * Construtor vazio para uso pelo JPA.
      */
+
     public Block() {
         // Construtor vazio necessário para JPA
     }
