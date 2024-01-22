@@ -8,6 +8,6 @@ class BookingManagerServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// Este teste verificará se o contexto do Spring Boot é carregado corretamente
 	}
-
 }

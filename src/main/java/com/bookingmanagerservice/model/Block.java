@@ -1,15 +1,18 @@
 package com.bookingmanagerservice.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
  * Classe representando a entidade Block (Bloqueio).
  * Esta entidade é mapeada para uma tabela no banco de dados com JPA.
+ * Representa um bloqueio de datas para uma propriedade, onde não podem ocorrer reservas.
  */
 @Entity
 public class Block {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,7 +32,6 @@ public class Block {
     /**
      * Construtor vazio para uso pelo JPA.
      */
-
     public Block() {
         // Construtor vazio necessário para JPA
     }

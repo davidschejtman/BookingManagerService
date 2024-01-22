@@ -1,12 +1,14 @@
 package com.bookingmanagerservice.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
  * Classe representando a entidade Booking (Reserva).
  * Esta entidade é mapeada para uma tabela no banco de dados com JPA.
+ * Representa uma reserva, com datas de início e término e detalhes do hóspede.
  */
 @Entity
 public class Booking {
@@ -14,21 +16,26 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
+
+    @NotNull(message = "Data de início não pode ser nula")
     @Column(nullable = false)
     private LocalDate startDate;
-    @NotNull
+
+    @NotNull(message = "Data de término não pode ser nula")
     @Column(nullable = false)
     private LocalDate endDate;
-    @NotBlank
+
+    @NotBlank(message = "Detalhes do hóspede não podem estar vazios")
     @Column(length = 200)
     private String guestDetails;
+
     /**
      * Construtor vazio para uso pelo JPA.
      */
     public Booking() {
-        // Construtor vazio para JPA
+        // Construtor vazio necessário para JPA
     }
+
     /**
      * Construtor para criar uma nova reserva.
      *
@@ -41,7 +48,9 @@ public class Booking {
         this.endDate = endDate;
         this.guestDetails = guestDetails;
     }
+
     // Getters e setters
+
     public Long getId() {
         return id;
     }
