@@ -29,10 +29,10 @@ BookingManagerService is a Java-based RESTful web service designed to efficientl
 - Use the JDBC URL, username, and password as defined in application.properties.
 
 ## API Endpoints
-- ** POST /bookings** - Create a new booking.
-- ** PUT /bookings/{id} **- Update an existing booking.
-- ** PATCH /bookings/{id}/cancel **- Cancel a booking.
-- ** DELETE /bookings/{id} **- Delete a booking.
+- **POST /bookings** - Create a new booking.
+- **PUT /bookings/{id}**- Update an existing booking.
+- **PATCH /bookings/{id}/cancel**- Cancel a booking.
+- **DELETE /bookings/{id}**- Delete a booking.
 - **GET /bookings** - Retrieve all bookings.
 - **POST /blocks** - Create a new block.
 - **PUT /blocks/{id}** - Update an existing block.
