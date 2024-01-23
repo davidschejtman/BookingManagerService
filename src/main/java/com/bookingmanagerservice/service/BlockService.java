@@ -33,7 +33,6 @@ public class BlockService {
      * @return O bloqueio salvo.
      */
     public Block createBlock(Block block) {
-        // Aqui, você pode adicionar validações ou lógica de negócios antes de salvar o bloqueio.
         return blockRepository.save(block);
     }
 
@@ -61,5 +60,4 @@ public class BlockService {
         return blockRepository.findAll();
     }
 
-    // Aqui, você pode adicionar outros métodos, como um método para atualizar um bloqueio.
 }

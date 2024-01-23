@@ -1,6 +1,7 @@
 package com.bookingmanagerservice.service;
 
 import com.bookingmanagerservice.model.Booking;
+import com.bookingmanagerservice.repository.BlockRepository;
 import com.bookingmanagerservice.repository.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,10 @@ import java.util.Optional;
 @Service
 public class BookingService {
 
+    @Autowired
     private final BookingRepository bookingRepository;
+    @Autowired
+    private BlockRepository blockRepository;
 
     @Autowired
     public BookingService(BookingRepository bookingRepository) {
@@ -40,8 +44,14 @@ public class BookingService {
      * @return true se as datas estiverem disponíveis, false caso contrário.
      */
     public boolean areDatesAvailable(LocalDate startDate, LocalDate endDate) {
-        // Implemente a lógica para verificar a disponibilidade das datas
-        return true; // Modifique de acordo com a lógica de verificação
+        // Verifica se há alguma reserva existente que se sobreponha às datas fornecidas
+        boolean isReserved = !bookingRepository.findOverlappingBookings(startDate, endDate).isEmpty();
+
+        // Verifica se há algum bloqueio existente que se sobreponha às datas fornecidas
+        boolean isBlocked = !blockRepository.findOverlappingBlocks(startDate, endDate).isEmpty();
+
+        // As datas estão disponíveis se não houver reservas ou bloqueios sobrepondo-as
+        return !isReserved && !isBlocked;
     }
 
     public Optional<Booking> updateBooking(Long id, Booking booking) {
@@ -63,7 +73,6 @@ public class BookingService {
         Optional<Booking> bookingOpt = bookingRepository.findById(id);
         if (bookingOpt.isPresent()) {
             Booking booking = bookingOpt.get();
-            // Adicione lógica adicional se necessário, como alterar o status da reserva para 'cancelado'
             bookingRepository.delete(booking);
             return true;
         }
@@ -82,7 +91,6 @@ public class BookingService {
             Booking bookingToUpdate = existingBooking.get();
             bookingToUpdate.setStartDate(newDates.getStartDate());
             bookingToUpdate.setEndDate(newDates.getEndDate());
-            // Atualize outras informações, se necessário
             return Optional.of(bookingRepository.save(bookingToUpdate));
         }
         return Optional.empty();
