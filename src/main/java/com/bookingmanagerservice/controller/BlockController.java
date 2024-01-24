@@ -6,63 +6,67 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid; // Garanta que esta importação está presente para @Valid
+import jakarta.validation.Valid; // Ensure this import is present for @Valid
 import java.util.List;
 
 /**
- * Controlador REST para gerenciar os bloqueios de propriedades.
+ * REST controller for managing property blocks.
+ * This controller provides endpoints for creating, deleting, and retrieving block entities.
  */
-@RestController
-@RequestMapping("/blocks")
+@RestController // Marks this class as a REST controller, meaning it's ready for use by Spring MVC to handle web requests.
+@RequestMapping("/blocks") // Maps HTTP requests to handler methods of MVC and REST controllers.
 public class BlockController {
 
-    private final BlockService blockService;
+    private final BlockService blockService; // Service layer dependency for block operations.
 
     /**
-     * Construtor para injeção do serviço de bloqueios.
+     * Constructor for dependency injection of block service.
      *
-     * @param blockService Serviço que gerencia as operações de bloqueio.
+     * @param blockService Service that manages block operations.
      */
-    @Autowired
+    @Autowired // Automatically injects the BlockService instance created by Spring.
     public BlockController(BlockService blockService) {
         this.blockService = blockService;
     }
 
     /**
-     * Cria um novo bloqueio.
+     * Creates a new block.
+     * This method will handle the POST request on "/blocks" endpoint.
      *
-     * @param block Objeto Block contendo informações sobre o bloqueio.
-     * @return ResponseEntity com o bloqueio criado e status CREATED.
+     * @param block Object Block containing information about the block.
+     * @return ResponseEntity with the created block and HTTP status CREATED.
      */
-    @PostMapping
+    @PostMapping // Maps HTTP POST requests onto specific handler methods.
     public ResponseEntity<Block> createBlock(@Valid @RequestBody Block block) {
-        Block savedBlock = blockService.createBlock(block);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBlock);
+        Block savedBlock = blockService.createBlock(block); // Calls the service layer to save the block.
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBlock); // Returns a response entity with CREATED status and saved block.
     }
 
     /**
-     * Método para deletar um bloqueio existente.
+     * Deletes an existing block.
+     * This method will handle the DELETE request on "/blocks/{id}" endpoint.
      *
-     * @param id O ID do bloqueio que está sendo deletado.
-     * @return ResponseEntity indicando o resultado da operação.
+     * @param id The ID of the block being deleted.
+     * @return ResponseEntity indicating the result of the operation.
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // Maps HTTP DELETE requests onto specific handler methods.
     public ResponseEntity<Void> deleteBlock(@PathVariable Long id) {
-        boolean isDeleted = blockService.deleteBlock(id);
+        boolean isDeleted = blockService.deleteBlock(id); // Calls the service layer to delete the block.
         if (!isDeleted) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); // Returns a NOT FOUND response if the block is not deleted.
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build(); // Returns an OK response if the block is successfully deleted.
     }
 
     /**
-     * Método para listar todos os bloqueios.
+     * Lists all blocks.
+     * This method will handle the GET request on "/blocks" endpoint.
      *
-     * @return Uma lista de todos os bloqueios e uma ResponseEntity.
+     * @return A list of all blocks and a ResponseEntity.
      */
-    @GetMapping
+    @GetMapping // Maps HTTP GET requests onto specific handler methods.
     public ResponseEntity<List<Block>> getAllBlocks() {
-        List<Block> blocks = blockService.getAllBlocks();
-        return ResponseEntity.ok(blocks);
+        List<Block> blocks = blockService.getAllBlocks(); // Calls the service layer to retrieve all blocks.
+        return ResponseEntity.ok(blocks); // Returns an OK response with the list of blocks.
     }
 }

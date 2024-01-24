@@ -1,47 +1,47 @@
 package com.bookingmanagerservice.model;
 
-import jakarta.persistence.*; // Importações JPA para mapeamento objeto-relacional
+import jakarta.persistence.*; // JPA imports for object-relational mapping
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
- * Classe representando a entidade Booking (Reserva).
- * Esta entidade é mapeada para uma tabela no banco de dados com JPA.
- * Representa uma reserva, com datas de início e término e detalhes do hóspede.
+ * Class representing the 'Booking' entity.
+ * This entity is mapped to a database table using JPA annotations.
+ * It represents a booking, with start and end dates, and guest details.
  */
-@Entity // Indica que esta classe é uma entidade JPA.
+@Entity // Indicates that this class is a JPA entity.
 public class Booking {
 
-    @Id // Marca o campo como chave primária.
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Estratégia de geração de ID.
-    private Long id;
+    @Id // Marks this field as the primary key.
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Defines the ID generation strategy.
+    private Long id; // Unique identifier for each booking.
 
-    @NotNull(message = "Data de início não pode ser nula") // Validação: a data de início não deve ser nula.
-    @Column(nullable = false) // Marca a coluna como não nula no banco de dados.
-    private LocalDate startDate;
+    @NotNull(message = "Start date cannot be null") // Validation: start date must not be null.
+    @Column(nullable = false) // Marks the column as non-null in the database.
+    private LocalDate startDate; // The start date of the booking.
 
-    @NotNull(message = "Data de término não pode ser nula") // Validação: a data de término não deve ser nula.
-    @Column(nullable = false) // Marca a coluna como não nula no banco de dados.
-    private LocalDate endDate;
+    @NotNull(message = "End date cannot be null") // Validation: end date must not be null.
+    @Column(nullable = false) // Marks the column as non-null in the database.
+    private LocalDate endDate; // The end date of the booking.
 
-    @NotBlank(message = "Detalhes do hóspede não podem estar vazios") // Validação: detalhes do hóspede não devem estar vazios.
-    @Column(length = 200) // Define o tamanho máximo da coluna.
-    private String guestDetails;
+    @NotBlank(message = "Guest details cannot be empty") // Validation: guest details must not be blank.
+    @Column(length = 200) // Sets the maximum size of the column.
+    private String guestDetails; // Details about the guest.
 
     /**
-     * Construtor vazio para uso pelo JPA.
+     * Empty constructor for use by JPA.
      */
     public Booking() {
-        // Construtor vazio necessário para o funcionamento adequado do JPA.
+        // Empty constructor required for proper functioning of JPA.
     }
 
     /**
-     * Construtor para criar uma nova reserva.
+     * Constructor to create a new booking.
      *
-     * @param startDate Data de início da reserva.
-     * @param endDate Data de término da reserva.
-     * @param guestDetails Detalhes do hóspede.
+     * @param startDate    Start date of the booking.
+     * @param endDate      End date of the booking.
+     * @param guestDetails Details of the guest.
      */
     public Booking(LocalDate startDate, LocalDate endDate, String guestDetails) {
         this.startDate = startDate;
@@ -49,7 +49,7 @@ public class Booking {
         this.guestDetails = guestDetails;
     }
 
-    // Getters e setters
+    // Getters and setters
 
     public Long getId() {
         return id;
@@ -83,7 +83,7 @@ public class Booking {
         this.guestDetails = guestDetails;
     }
 
-    // Sobrescrita dos métodos equals e hashCode...
+    // Overriding equals and hashCode methods...
 
     @Override
     public boolean equals(Object o) {

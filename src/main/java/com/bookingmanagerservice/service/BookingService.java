@@ -9,82 +9,109 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+/**
+ * Service class that manages operations related to bookings.
+ * This class contains the business logic for handling bookings, such as creation, updating, cancellation, and rescheduling.
+ */
+@Service // Marks this class as a service component in the Spring framework.
 public class BookingService {
 
-    private final BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository; // Dependency on the booking repository.
 
+    /**
+     * Constructor for dependency injection of the BookingRepository.
+     *
+     * @param bookingRepository Repository that handles booking operations.
+     */
     @Autowired
     public BookingService(BookingRepository bookingRepository) {
         this.bookingRepository = bookingRepository;
     }
 
     /**
-     * Cria uma nova reserva, verificando primeiro se as datas estão disponíveis.
+     * Creates a new booking, first checking if the dates are available.
      *
-     * @param booking A reserva a ser criada.
-     * @return Um Optional contendo a reserva salva, ou um Optional vazio se as datas não estiverem disponíveis.
+     * @param booking The booking to be created.
+     * @return An Optional containing the saved booking, or an empty Optional if the dates are not available.
      */
     public Optional<Booking> createBooking(Booking booking) {
         if (!areDatesAvailable(booking.getStartDate(), booking.getEndDate())) {
-            return Optional.empty();  // As datas não estão disponíveis
+            return Optional.empty(); // Dates are not available.
         }
         return Optional.of(bookingRepository.save(booking));
     }
 
     /**
-     * Verifica se as datas de uma reserva estão disponíveis.
+     * Checks if the dates of a booking are available.
      *
-     * @param startDate Data de início da reserva.
-     * @param endDate Data de término da reserva.
-     * @return true se as datas estiverem disponíveis, false caso contrário.
+     * @param startDate The start date of the booking.
+     * @param endDate The end date of the booking.
+     * @return true if the dates are available, false otherwise.
      */
     public boolean areDatesAvailable(LocalDate startDate, LocalDate endDate) {
-        List<Booking> allBookings = bookingRepository.findAll();  // Retrieve all existing bookings
+        List<Booking> allBookings = bookingRepository.findAll(); // Retrieve all existing bookings.
 
         for (Booking existingBooking : allBookings) {
             if (dateRangesOverlap(existingBooking.getStartDate(), existingBooking.getEndDate(), startDate, endDate)) {
-                return false;  // The dates are not available as they overlap with an existing booking
+                return false; // The dates are not available as they overlap with an existing booking.
             }
         }
-        return true;  // The dates are available
+        return true; // The dates are available.
     }
 
+    /**
+     * Helper method to check if two date ranges overlap.
+     *
+     * @param start1 Start date of the first range.
+     * @param end1 End date of the first range.
+     * @param start2 Start date of the second range.
+     * @param end2 End date of the second range.
+     * @return true if the ranges overlap, false otherwise.
+     */
     private boolean dateRangesOverlap(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
         return !start1.isAfter(end2) && !start2.isAfter(end1);
     }
 
+    /**
+     * Updates an existing booking.
+     *
+     * @param id The ID of the booking to update.
+     * @param booking The updated booking details.
+     * @return An Optional containing the updated booking, or an empty Optional if the booking is not found.
+     */
     public Optional<Booking> updateBooking(Long id, Booking booking) {
         if (!bookingRepository.existsById(id)) {
-            return Optional.empty(); // A reserva com o ID fornecido não foi encontrada
+            return Optional.empty(); // The booking with the provided ID was not found.
         }
 
-        booking.setId(id); // Certifique-se de que a reserva tem o ID correto
+        booking.setId(id); // Ensure the booking has the correct ID.
         Booking updatedBooking = bookingRepository.save(booking);
         return Optional.of(updatedBooking);
     }
+
     /**
-     * Cancela uma reserva existente.
+     * Cancels an existing booking.
      *
-     * @param id O ID da reserva a ser cancelada.
-     * @return true se a reserva foi cancelada com sucesso, false caso contrário.
+     * @param id The ID of the booking to be canceled.
+     * @return true if the booking was successfully canceled, false otherwise.
      */
     public boolean cancelBooking(Long id) {
         Optional<Booking> bookingOpt = bookingRepository.findById(id);
         if (bookingOpt.isPresent()) {
             Booking booking = bookingOpt.get();
-            // Adicione lógica adicional se necessário, como alterar o status da reserva para 'cancelado'
+            // Add additional logic if necessary, such as changing the status of the booking to 'canceled'.
             bookingRepository.delete(booking);
             return true;
         }
-        return false; // A reserva com o ID fornecido não foi encontrada
+        return false; // The booking with the provided ID was not found.
     }
+
     /**
-     * Reagenda uma reserva existente.
+     * Reschedules an existing booking.
      *
-     * @param id O ID da reserva a ser reagendada.
-     * @param newDates Os novos dados da reserva para reagendamento.
-     * @return Um Optional contendo a reserva reagendada, ou um Optional vazio se a reserva não puder ser reagendada.
+     * @param id The ID of the booking to be rescheduled.
+     * @param newDates The new booking details for rescheduling.
+     * @return An Optional containing the rescheduled booking, or an empty Optional if the booking cannot be rescheduled.
      */
     public Optional<Booking> rescheduleBooking(Long id, Booking newDates) {
         Optional<Booking> existingBooking = bookingRepository.findById(id);
@@ -92,24 +119,26 @@ public class BookingService {
             Booking bookingToUpdate = existingBooking.get();
             bookingToUpdate.setStartDate(newDates.getStartDate());
             bookingToUpdate.setEndDate(newDates.getEndDate());
-            // Atualize outras informações, se necessário
+            // Update other information, if necessary.
             return Optional.of(bookingRepository.save(bookingToUpdate));
         }
         return Optional.empty();
     }
+
     /**
-     * Recupera todas as reservas.
+     * Retrieves all bookings.
      *
-     * @return Lista de todas as reservas.
+     * @return A list of all bookings.
      */
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
+
     /**
-     * Deleta uma reserva com base no ID fornecido.
+     * Deletes a booking based on the provided ID.
      *
-     * @param id O ID da reserva a ser deletada.
-     * @return true se a reserva foi deletada com sucesso, false caso contrário.
+     * @param id The ID of the booking to be deleted.
+     * @return true if the booking was successfully deleted, false otherwise.
      */
     public boolean deleteBooking(Long id) {
         if (bookingRepository.existsById(id)) {

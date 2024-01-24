@@ -18,82 +18,102 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 
-
-@WebMvcTest(BookingController.class)
+/**
+ * Test class for BookingController.
+ * It tests the REST API endpoints defined in the BookingController.
+ */
+@WebMvcTest(BookingController.class) // Specifies that WebMvcTest is to be used for testing the BookingController class.
 public class BookingControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mockMvc; // MockMvc provides support for Spring MVC testing.
 
     @MockBean
-    private BookingService bookingService;
+    private BookingService bookingService; // Mock version of BookingService.
 
+    /**
+     * Test for the GET request to retrieve all bookings.
+     */
     @Test
     public void testGetAllBookings() throws Exception {
-        mockMvc.perform(get("/bookings"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/bookings")) // Perform a GET request.
+                .andExpect(status().isOk()); // Expect HTTP 200 OK status.
     }
 
+    /**
+     * Test for the POST request to create a new booking.
+     */
     @Test
     public void testCreateBooking() throws Exception {
-        // Preparando o objeto Booking para o teste
+        // Prepare Booking object for test.
         Booking mockBooking = new Booking();
         mockBooking.setStartDate(LocalDate.of(2024, 1, 25));
         mockBooking.setEndDate(LocalDate.of(2024, 1, 26));
         mockBooking.setGuestDetails("John Doe");
 
-        // Configurando o mock do BookingService para retornar o objeto mockBooking
+        // Mocking the service to return the mock booking.
         when(bookingService.createBooking(any(Booking.class))).thenReturn(Optional.of(mockBooking));
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String bookingJson = objectMapper.writeValueAsString(mockBooking);
 
-        // Realizando a chamada POST para o endpoint /bookings
+        // Perform a POST request to the /bookings endpoint.
         mockMvc.perform(post("/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bookingJson))
-                .andExpect(status().isOk()); // Verificando se a resposta tem o status HTTP 200 OK
+                .andExpect(status().isOk()); // Expect HTTP 200 OK status.
     }
 
+    /**
+     * Test for the PUT request to update a booking.
+     */
     @Test
     public void testUpdateBooking() throws Exception {
+        // Prepare Booking object for update.
         Booking mockBookingToUpdate = new Booking();
         mockBookingToUpdate.setStartDate(LocalDate.of(2024, 1, 25));
         mockBookingToUpdate.setEndDate(LocalDate.of(2024, 1, 26));
         mockBookingToUpdate.setGuestDetails("Jane Doe");
 
-        // Suponha que o serviço retorne o objeto atualizado encapsulado em um Optional
+        // Mock the service to return the updated object encapsulated in an Optional.
         doReturn(Optional.of(mockBookingToUpdate)).when(bookingService).updateBooking(any(Long.class), any());
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String bookingJson = objectMapper.writeValueAsString(mockBookingToUpdate);
 
+        // Perform a PUT request to update a booking.
         mockMvc.perform(put("/bookings/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bookingJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()); // Expect HTTP 200 OK status.
     }
 
-
+    /**
+     * Test for the PATCH request to cancel a booking.
+     */
     @Test
     public void testCancelBooking() throws Exception {
         doReturn(true).when(bookingService).cancelBooking(any(Long.class));
 
+        // Perform a PATCH request to cancel a booking.
         mockMvc.perform(patch("/bookings/1/cancel"))
-                .andExpect(status().isOk()); // ou outro status esperado
+                .andExpect(status().isOk()); // Expect HTTP 200 OK or another expected status.
     }
 
+    /**
+     * Test for the DELETE request to delete a booking.
+     */
     @Test
     public void testDeleteBooking() throws Exception {
         doReturn(true).when(bookingService).deleteBooking(any(Long.class));
 
+        // Perform a DELETE request to delete a booking.
         mockMvc.perform(delete("/bookings/1"))
-                .andExpect(status().isOk()); // ou outro status esperado
+                .andExpect(status().isOk()); // Expect HTTP 200 OK or another expected status.
     }
 
-    // Adicione mais testes para outros endpoints conforme necessário
+    // Additional tests for other endpoints can be added as necessary.
 }

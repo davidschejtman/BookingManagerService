@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
 
 @ExtendWith(MockitoExtension.class)
 public class BookingServiceTest {
@@ -142,5 +143,50 @@ public class BookingServiceTest {
         verify(bookingRepository).findById(bookingId);
         verify(bookingRepository).save(any(Booking.class));
     }
+    @Test
+    public void testCancellationAndRebooking() {
+        Long bookingId = 1L;
+        Booking bookingToCancel = new Booking(); // set up this booking with required details
+        Booking newBooking = new Booking(); // set up this booking with new details
 
+        // Mock the repository behavior
+        when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(bookingToCancel));
+        when(bookingRepository.save(any(Booking.class))).thenReturn(newBooking);
+
+        // Perform cancellation
+        boolean cancellationResult = bookingService.cancelBooking(bookingId);
+        assertTrue(cancellationResult, "Booking should be cancelled successfully");
+
+        // Perform rebooking
+        Optional<Booking> rebooked = bookingService.createBooking(newBooking);
+        assertTrue(rebooked.isPresent(), "Rebooking should be successful");
+
+        // Verify interactions with repository
+        verify(bookingRepository).delete(bookingToCancel);
+        verify(bookingRepository).save(newBooking);
+    }
+
+    @Test
+    public void testBookingWithOverlappingDates() {
+        Long bookingId = 1L;
+        Booking existingBooking = new Booking();
+        existingBooking.setId(bookingId);
+        existingBooking.setStartDate(LocalDate.of(2024, 1, 5));
+        existingBooking.setEndDate(LocalDate.of(2024, 1, 10));
+
+        // Mock the findAll method to return a list with an existing booking
+        when(bookingRepository.findAll()).thenReturn(Arrays.asList(existingBooking));
+
+        Booking newBooking = new Booking();
+        newBooking.setStartDate(LocalDate.of(2024, 1, 7)); // These dates overlap with the existing booking
+        newBooking.setEndDate(LocalDate.of(2024, 1, 12));
+
+        // Attempt to create a booking
+        Optional<Booking> result = bookingService.createBooking(newBooking);
+
+        assertFalse(result.isPresent(), "Booking should not be successful due to overlapping dates");
+
+        // Verify that save method was never called since dates overlap
+        verify(bookingRepository, never()).save(newBooking);
+    }
 }

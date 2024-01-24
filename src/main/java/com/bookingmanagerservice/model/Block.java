@@ -6,42 +6,42 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
- * Classe representando a entidade Block (Bloqueio).
- * Esta entidade é mapeada para uma tabela no banco de dados com JPA.
- * Representa um bloqueio de datas para uma propriedade, onde não podem ocorrer reservas.
+ * Class representing the 'Block' entity.
+ * This entity is mapped to a table in the database using JPA annotations.
+ * It represents a block of dates for a property during which no bookings can occur.
  */
-@Entity
+@Entity // Specifies that the class is an entity and is mapped to a database table.
 public class Block {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id // Marks the id field as the primary key.
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Configures the way of increment of the specified column(field).
+    private Long id; // Unique identifier for each block.
 
-    @NotNull(message = "Data de início não pode ser nula")
-    @Column(nullable = false)
-    private LocalDate startDate;
+    @NotNull(message = "Start date cannot be null") // Ensures the start date is not null.
+    @Column(nullable = false) // Marks the field as a column in the table with a constraint of not being null.
+    private LocalDate startDate; // The start date of the block.
 
-    @NotNull(message = "Data de término não pode ser nula")
-    @Column(nullable = false)
-    private LocalDate endDate;
+    @NotNull(message = "End date cannot be null") // Ensures the end date is not null.
+    @Column(nullable = false) // Marks the field as a column in the table with a constraint of not being null.
+    private LocalDate endDate; // The end date of the block.
 
-    @NotBlank(message = "A razão do bloqueio não pode estar vazia")
-    @Column(length = 500)
-    private String reason;
+    @NotBlank(message = "The reason for the block cannot be empty") // Ensures the reason is not blank.
+    @Column(length = 500) // Marks the field as a column in the table and specifies the column length.
+    private String reason; // The reason for the block.
 
     /**
-     * Construtor vazio para uso pelo JPA.
+     * Empty constructor for use by JPA.
      */
     public Block() {
-        // Construtor vazio necessário para JPA
+        // Empty constructor required for JPA
     }
 
     /**
-     * Construtor para criar um novo bloqueio.
+     * Constructor to create a new block.
      *
-     * @param startDate Data de início do bloqueio.
-     * @param endDate   Data de término do bloqueio.
-     * @param reason    Razão/motivo do bloqueio.
+     * @param startDate Start date of the block.
+     * @param endDate   End date of the block.
+     * @param reason    Reason/motive for the block.
      */
     public Block(LocalDate startDate, LocalDate endDate, String reason) {
         this.startDate = startDate;
@@ -49,7 +49,7 @@ public class Block {
         this.reason = reason;
     }
 
-    // Getters e setters
+    // Getters and setters
 
     public Long getId() {
         return id;
@@ -83,7 +83,7 @@ public class Block {
         this.reason = reason;
     }
 
-    // Sobrescrita dos métodos equals e hashCode...
+    // Overriding equals and hashCode methods...
 
     @Override
     public boolean equals(Object o) {

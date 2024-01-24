@@ -8,47 +8,47 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Repositório JPA para a entidade Block.
- * Esta interface gerencia as operações de banco de dados para a entidade Block,
- * que representa períodos de tempo durante os quais uma propriedade está indisponível para reserva.
+ * JPA Repository for the Block entity.
+ * This interface manages database operations for the Block entity,
+ * which represents periods when a property is unavailable for booking.
  */
-@Repository
+@Repository // Indicates that this interface is a repository component in the Spring framework.
 public interface BlockRepository extends JpaRepository<Block, Long> {
 
     /**
-     * Encontra bloqueios que começam em uma data específica.
+     * Finds blocks that start on a specific date.
      *
-     * @param startDate A data de início dos bloqueios a serem encontrados.
-     * @return Lista de bloqueios que começam na data especificada.
+     * @param startDate The start date of the blocks to be found.
+     * @return List of blocks that start on the specified date.
      */
     List<Block> findByStartDate(LocalDate startDate);
 
     /**
-     * Encontra bloqueios que terminam em uma data específica.
+     * Finds blocks that end on a specific date.
      *
-     * @param endDate A data de término dos bloqueios a serem encontrados.
-     * @return Lista de bloqueios que terminam na data especificada.
+     * @param endDate The end date of the blocks to be found.
+     * @return List of blocks that end on the specified date.
      */
     List<Block> findByEndDate(LocalDate endDate);
 
     /**
-     * Encontra bloqueios que ocorrem dentro de um intervalo de datas.
+     * Finds blocks that occur within a date range.
      *
-     * @param startDate Data de início do intervalo de busca.
-     * @param endDate Data de término do intervalo de busca.
-     * @return Lista de bloqueios dentro do intervalo de datas especificado.
+     * @param startDate The start date of the search range.
+     * @param endDate   The end date of the search range.
+     * @return List of blocks within the specified date range.
      */
     @Query("SELECT b FROM Block b WHERE b.startDate <= :endDate AND b.endDate >= :startDate")
     List<Block> findBlocksInDateRange(LocalDate startDate, LocalDate endDate);
 
     /**
-     * Encontra bloqueios que se sobrepõem a um intervalo de datas.
-     * Isso inclui bloqueios que começam antes e terminam dentro do intervalo,
-     * começam dentro e terminam depois, ou totalmente dentro do intervalo.
+     * Finds blocks that overlap with a date range.
+     * This includes blocks that start before and end within the range,
+     * start within and end after, or are entirely within the range.
      *
-     * @param startDate Data de início do intervalo de busca.
-     * @param endDate Data de término do intervalo de busca.
-     * @return Lista de bloqueios que se sobrepõem ao intervalo especificado.
+     * @param startDate The start date of the search range.
+     * @param endDate   The end date of the search range.
+     * @return List of blocks that overlap with the specified range.
      */
     @Query("SELECT b FROM Block b WHERE b.startDate < :endDate AND b.endDate > :startDate")
     List<Block> findOverlappingBlocks(LocalDate startDate, LocalDate endDate);

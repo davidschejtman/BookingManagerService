@@ -7,37 +7,37 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Repositório JPA para a entidade Booking.
- * Esta interface gerencia as operações de banco de dados para a entidade Booking.
+ * JPA Repository for the Booking entity.
+ * This interface manages the database operations for the Booking entity.
  */
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     /**
-     * Encontra reservas que se sobrepõem a um determinado intervalo de datas.
-     * Utiliza a linguagem de consulta JPQL para selecionar reservas com datas que se sobrepõem.
+     * Finds bookings that overlap with a given date range.
+     * Uses the JPQL (Java Persistence Query Language) to select bookings with overlapping dates.
      *
-     * @param startDate Data de início do intervalo de busca.
-     * @param endDate Data de término do intervalo de busca.
-     * @return Lista de reservas que se sobrepõem ao intervalo especificado.
+     * @param startDate The start date of the search range.
+     * @param endDate   The end date of the search range.
+     * @return List of bookings that overlap with the specified range.
      */
     @Query("SELECT b FROM Booking b WHERE b.startDate <= :endDate AND b.endDate >= :startDate")
     List<Booking> findOverlappingBookings(LocalDate startDate, LocalDate endDate);
 
     /**
-     * Encontra reservas por detalhes do hóspede.
-     * O método aproveita a capacidade do Spring Data JPA de gerar consultas a partir de nomes de métodos.
+     * Finds bookings by guest details.
+     * This method leverages Spring Data JPA's ability to generate queries from method names.
      *
-     * @param guestDetails Detalhes do hóspede.
-     * @return Lista de reservas associadas ao hóspede especificado.
+     * @param guestDetails The guest details.
+     * @return List of bookings associated with the specified guest.
      */
     List<Booking> findByGuestDetails(String guestDetails);
 
     /**
-     * Encontra reservas por uma data específica.
-     * Retorna todas as reservas que incluem a data fornecida.
+     * Finds bookings by a specific date.
+     * Returns all bookings that include the provided date.
      *
-     * @param date Data específica para busca de reservas.
-     * @return Lista de reservas que incluem a data especificada.
+     * @param date The specific date for searching bookings.
+     * @return List of bookings that include the specified date.
      */
     @Query("SELECT b FROM Booking b WHERE b.startDate <= :date AND b.endDate >= :date")
     List<Booking> findBookingsByDate(LocalDate date);
