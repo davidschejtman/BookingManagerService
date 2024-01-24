@@ -45,7 +45,7 @@ Run the automated tests using:
 
 ## Database Choice
 
-For this project, we have chosen the H2 Database for the following reasons:
+For this project, i have chosen the H2 Database for the following reasons:
 - **Ease of Configuration:** H2 is an in-memory database, which means it requires no separate installation, making it ideal for rapid development and testing.
 - **Speed for Testing:** The in-memory nature of H2 makes it incredibly fast for integration tests.
 - **Compatibility with JPA/Hibernate:** H2 integrates seamlessly with Spring Boot and Hibernate, ensuring smooth development and testing processes.
