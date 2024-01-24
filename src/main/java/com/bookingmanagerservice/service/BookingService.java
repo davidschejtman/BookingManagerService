@@ -40,8 +40,18 @@ public class BookingService {
      * @return true se as datas estiverem disponíveis, false caso contrário.
      */
     public boolean areDatesAvailable(LocalDate startDate, LocalDate endDate) {
-        // Implemente a lógica para verificar a disponibilidade das datas
-        return true; // Modifique de acordo com a lógica de verificação
+        List<Booking> allBookings = bookingRepository.findAll();  // Retrieve all existing bookings
+
+        for (Booking existingBooking : allBookings) {
+            if (dateRangesOverlap(existingBooking.getStartDate(), existingBooking.getEndDate(), startDate, endDate)) {
+                return false;  // The dates are not available as they overlap with an existing booking
+            }
+        }
+        return true;  // The dates are available
+    }
+
+    private boolean dateRangesOverlap(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
+        return !start1.isAfter(end2) && !start2.isAfter(end1);
     }
 
     public Optional<Booking> updateBooking(Long id, Booking booking) {
