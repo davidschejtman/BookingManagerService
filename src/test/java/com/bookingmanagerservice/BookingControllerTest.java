@@ -59,11 +59,10 @@ public class BookingControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
         String bookingJson = objectMapper.writeValueAsString(mockBooking);
 
-        // Perform a POST request to the /bookings endpoint.
         mockMvc.perform(post("/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bookingJson))
-                .andExpect(status().isOk()); // Expect HTTP 200 OK status.
+                .andExpect(status().isCreated());
     }
 
     /**

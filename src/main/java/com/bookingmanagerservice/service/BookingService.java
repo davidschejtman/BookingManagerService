@@ -3,6 +3,8 @@ package com.bookingmanagerservice.service;
 import com.bookingmanagerservice.model.Booking;
 import com.bookingmanagerservice.repository.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,12 +36,15 @@ public class BookingService {
      * @param booking The booking to be created.
      * @return An Optional containing the saved booking, or an empty Optional if the dates are not available.
      */
+    // Returns an Optional of Booking if creation is successful, or an Optional of String if there's an error (dates overlap).
     public Optional<Booking> createBooking(Booking booking) {
         if (!areDatesAvailable(booking.getStartDate(), booking.getEndDate())) {
-            return Optional.empty(); // Dates are not available.
+            // Handle the case where dates are unavailable, possibly by throwing an exception or using another approach.
+            return Optional.empty();
         }
         return Optional.of(bookingRepository.save(booking));
     }
+
 
     /**
      * Checks if the dates of a booking are available.
@@ -113,16 +118,18 @@ public class BookingService {
      * @param newDates The new booking details for rescheduling.
      * @return An Optional containing the rescheduled booking, or an empty Optional if the booking cannot be rescheduled.
      */
+    // Returns an Optional of Booking if rescheduling is successful, or an Optional of String if there's an error (dates overlap).
     public Optional<Booking> rescheduleBooking(Long id, Booking newDates) {
         Optional<Booking> existingBooking = bookingRepository.findById(id);
-        if (existingBooking.isPresent() && areDatesAvailable(newDates.getStartDate(), newDates.getEndDate())) {
-            Booking bookingToUpdate = existingBooking.get();
-            bookingToUpdate.setStartDate(newDates.getStartDate());
-            bookingToUpdate.setEndDate(newDates.getEndDate());
-            // Update other information, if necessary.
-            return Optional.of(bookingRepository.save(bookingToUpdate));
+        if (!existingBooking.isPresent() || !areDatesAvailable(newDates.getStartDate(), newDates.getEndDate())) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        Booking bookingToUpdate = existingBooking.get();
+        bookingToUpdate.setStartDate(newDates.getStartDate());
+        bookingToUpdate.setEndDate(newDates.getEndDate());
+        // Update other necessary details
+        return Optional.of(bookingRepository.save(bookingToUpdate));
     }
 
     /**

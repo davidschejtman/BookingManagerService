@@ -12,8 +12,8 @@ import java.util.Optional;
 
 /**
  * REST controller for managing bookings.
- * This controller provides HTTP endpoints for various operations related to bookings,
- * like adding, updating, cancelling, rescheduling, retrieving, and deleting bookings.
+ * Provides HTTP endpoints for operations like adding, updating,
+ * cancelling, rescheduling, retrieving, and deleting bookings.
  */
 @RestController
 @RequestMapping("/bookings")
@@ -24,7 +24,7 @@ public class BookingController {
     /**
      * Constructor to inject the BookingService dependency.
      *
-     * @param bookingService Service that handles the business logic related to bookings.
+     * @param bookingService Service handling business logic related to bookings.
      */
     @Autowired
     public BookingController(BookingService bookingService) {
@@ -32,29 +32,30 @@ public class BookingController {
     }
 
     /**
-     * Adds a new booking.
+     * Endpoint to add a new booking.
      * Handles POST request to add a new booking.
      *
      * @param booking The booking object to be added.
      * @return ResponseEntity containing the saved booking or a conflict status.
      */
+
     @PostMapping
     public ResponseEntity<?> addBooking(@RequestBody Booking booking) {
         Optional<Booking> savedBooking = bookingService.createBooking(booking);
         if (!savedBooking.isPresent()) {
-            // Conflict status if the booking dates are unavailable.
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("As datas da reserva estão indisponíveis.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Booking dates are unavailable.");
         }
-        return ResponseEntity.ok(savedBooking.get());
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBooking.get());
     }
 
+
     /**
-     * Updates an existing booking.
-     * Handles PUT request for updating a booking by its ID.
+     * Endpoint to update an existing booking.
+     * Handles PUT request to update a booking by its ID.
      *
      * @param id The ID of the booking to update.
-     * @param booking The updated booking object.
-     * @return ResponseEntity with the updated booking or not found status.
+     * @param booking Updated booking details.
+     * @return ResponseEntity containing the updated booking or a not found status.
      */
     @PutMapping("/{id}")
     public ResponseEntity<Booking> updateBooking(@PathVariable Long id, @Valid @RequestBody Booking booking) {
@@ -64,10 +65,10 @@ public class BookingController {
     }
 
     /**
-     * Cancels a booking.
-     * Handles PATCH request for cancelling a booking by its ID.
+     * Endpoint to cancel a booking.
+     * Handles PATCH request to cancel a booking by its ID.
      *
-     * @param id The ID of the booking to cancel.
+     * @param id ID of the booking to cancel.
      * @return ResponseEntity indicating success or not found.
      */
     @PatchMapping("/{id}/cancel")
@@ -77,23 +78,26 @@ public class BookingController {
     }
 
     /**
-     * Reschedules a booking.
-     * Handles PATCH request for rescheduling a booking by its ID.
+     * Endpoint to reschedule an existing booking.
      *
      * @param id The ID of the booking to reschedule.
-     * @param newDates The booking object with new dates.
-     * @return ResponseEntity with the rescheduled booking or not found status.
+     * @param newDates The new booking details.
+     * @return ResponseEntity containing the updated booking or an error message.
      */
     @PatchMapping("/{id}/reschedule")
-    public ResponseEntity<Booking> rescheduleBooking(@PathVariable Long id, @RequestBody Booking newDates) {
+    public ResponseEntity<?> rescheduleBooking(@PathVariable Long id, @RequestBody Booking newDates) {
         Optional<Booking> rescheduledBookingOpt = bookingService.rescheduleBooking(id, newDates);
-        return rescheduledBookingOpt.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+
+        if (!rescheduledBookingOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to reschedule the booking. Either the booking does not exist or the new dates are not available.");
+        }
+
+        return ResponseEntity.ok(rescheduledBookingOpt.get());
     }
 
     /**
-     * Retrieves all bookings.
-     * Handles GET request to get a list of all bookings.
+     * Endpoint to retrieve all bookings.
+     * Handles GET request for a list of all bookings.
      *
      * @return ResponseEntity with a list of all bookings.
      */
@@ -104,10 +108,10 @@ public class BookingController {
     }
 
     /**
-     * Deletes a booking.
-     * Handles DELETE request for deleting a booking by its ID.
+     * Endpoint to delete a booking.
+     * Handles DELETE request to delete a booking by its ID.
      *
-     * @param id The ID of the booking to delete.
+     * @param id ID of the booking to delete.
      * @return ResponseEntity indicating success or not found.
      */
     @DeleteMapping("/{id}")
